@@ -1,7 +1,7 @@
 # EC16
 The EC16 is a 16-bit soft microprocessor for FPGAs written in VHDL.
 
- <img src="/Doc/EC16_Logo.jpg" width="300" />
+ <img src="/Doc/EC16_Logo.jpg" width="400" />
  
 # Some basic characteristics:
 - 16-bit data width
