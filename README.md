@@ -1,15 +1,21 @@
 # EC16
+The EC16 is a 16-bit soft microprocessor for FPGAs written in VHDL.
 
-<p float="right">
-  <img src="/Doc/EC16-symbol.jpg" width="800" />
-</p>
+ <img src="/Doc/EC16_Logo.jpg" width="300" />
+ 
+# Some basic characteristics:
+- 16-bit data width
+- 16-bit address space for external memory (code, data and I/O)
+- 256 word internal memory (registers, stack, scratch pad memory)
+- 50 instructions
+  * instruction length: mostly single word, only 4 instructions with two words
+  * speed: 18 one-cycle, 15 two-cycle, 9 three-cycle, 8 one/two-cycle (branch)
+- 4 maskable prioritized interrupts
 
-The EC16 is an open source soft microprocessor with 16-bit data width and 16-bit address space written in VHDL.
+The EC16 is implemented as an open source Lattice Radiant Project [EC16_on_ICE](https://github.com/Edgar-Conzen/EC16_on_ICE) for the [ICY40 board](https://github.com/Edgar-Conzen/ICY40), 
+running at 20 MHz and using only about 21% of the ICE40UP5K FPGAs logic resources while already including peripherals like COM-Port and I2C Master.
 
-It is implemented as Lattice Radiant Project [EC16_on_ICE](https://github.com/Edgar-Conzen/EC16_on_ICE) for the [ICY40 board](https://github.com/Edgar-Conzen/ICY40)
-running at 20 MHz and using only about 21% of the FPGAs logic resources.
+  <img src="/Doc/ICY40_EC16_writes_text_on_display.jpg" width="500" />
 
-<p float="right">
-  <img src="/Doc/ICY40_EC16_writes_text_on_display.jpg" width="800" />
-</p>
-
+ # Downloads
+ - [Processor Handbook](https://github.com/Edgar-Conzen/EC16/raw/main/Doc/EC16_ISA_V1.0.pdf)
