@@ -183,8 +183,13 @@ def getnum(number):
         print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
         print(full_source[line[C_LNUM] - 1])
         sys.exit()
-
-    return value
+    if 0 <= value <=65535 : 
+        return value
+    print('Error: Number too big, must be 0 .. 65535')
+    print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
+    print(full_source[line[C_LNUM] - 1])
+    sys.exit()
+   
 
 
 def testnum(number):
@@ -641,6 +646,12 @@ for linenum, line in enumerate(code):
 for linenum, line in enumerate(code):
     if line[C_MNE] not in directives :
         if line[C_OLT] == '#U8' :
+            u8temp = getnum(line[C_OPCLO])
+            if u8temp > 255 :
+                print('Error: Argument too big, must be 0 .. 255')
+                print('See "' + listing_name + '" at line '  + str(line[C_LNUM]))
+                print(full_source[line[C_LNUM] - 1])
+                sys.exit(1)
             code[linenum][C_OPC] = '0x%04X' % (getnum(line[C_OPC]) + getnum(line[C_OPCLO]))
         if line[C_OLT] == '#S8' :
             targetaddr = getnum(line[C_OPCLO])
