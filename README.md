@@ -21,3 +21,6 @@ running at 20 MHz and using only about 21% of the ICE40UP5K FPGAs logic resource
  - [Processor Handbook](https://raw.github.com/Edgar-Conzen/EC16/main/Download/EC16_ISA_V1.0.pdf)
  - [EC16ASM syntax highlighting for Notepad++](https://raw.github.com/Edgar-Conzen/EC16/main/Download/EC16_ASM_Syntax_for_NotepadPP.xml)
  - [EC16 Assembler as Python Program](https://raw.github.com/Edgar-Conzen/EC16/main/Download/ec16asm.py)
+
+# Further Information
+See the [EC16 Wiki](https://github.com/Edgar-Conzen/EC16/wiki)
