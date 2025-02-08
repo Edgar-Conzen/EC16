@@ -6,7 +6,7 @@
         </Settings>
         <KeywordLists>
             <Keywords name="Comments">00; 01 02 03 04</Keywords>
-            <Keywords name="Numbers, prefix1">0b</Keywords>
+            <Keywords name="Numbers, prefix1">0b 0o</Keywords>
             <Keywords name="Numbers, prefix2">0x</Keywords>
             <Keywords name="Numbers, extras1">A B C D E F a b c d e f</Keywords>
             <Keywords name="Numbers, extras2"></Keywords>
