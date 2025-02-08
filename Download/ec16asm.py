@@ -106,9 +106,6 @@ C_OPC = 7		# full resp. upper half of opcode
 C_OPCLO = 8		# lower half of opcode (#S8/#U8)
 C_ARG = 9		# #U16 argument
 
-# list with the
-extmem : list = []
-
 
 lbl_line : list = []       # list of source code line numbers where labels are defined
 lbl_name : list = []       # list of label names
@@ -198,6 +195,19 @@ def testnum(number):
     except (TypeError, ValueError):
         return False
 
+    return True
+
+
+def is_valid_label(label) : 
+
+    labelstart = label[:1]
+    if labelstart.isnumeric() :
+        return False
+
+    for char in label :
+        if not char.isalnum() and char != '_' :
+            return False
+    
     return True
 
 
@@ -347,24 +357,28 @@ def exec_directive():
     # RES_I
     elif line[C_MNE]=='res_i':
         if len(line)!=4:
-            print('Error in RES_I directive!')
+            print('Error in RES_I directive! Wrong number of arguments')
             print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
             print(full_source[line[C_LNUM] - 1])
             sys.exit()
         # get the number of words to reserve
+        # Must be an integer or
         if testnum(line[C_ARG1]) == True :
             value = getnum(line[C_ARG1])
-        elif (line[C_ARG1]) in lbl_name :
-            value = lbl_value[lbl_name.index(line[C_ARG1])]            
-        # add own label value to label list
-        if line[C_LBL] in lbl_name:
-            idx = lbl_name.index(line[C_LBL])
-        else:
-            print('Error: RES_I must be proceeded by a label')
+        # an already defined label
+        elif line[C_ARG1] in lbl_name :
+            value = lbl_value[lbl_name.index(line[C_ARG1])]
+        if value == -1 :
+            print('Error: Argument must be an integer or an already defined label')
             print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
             print(full_source[line[C_LNUM] - 1])
             sys.exit()
-        lbl_value[idx]=intmem_cnt
+
+        # add own label value to label list
+        if line[C_LBL] in lbl_name:
+            idx = lbl_name.index(line[C_LBL])
+            lbl_value[idx]=intmem_cnt
+
         intmem_cnt+=value
         if intmem_cnt > 256:
             print('Error: Exceeded INTMEM range 0..255')
@@ -376,26 +390,31 @@ def exec_directive():
     # RES_E
     elif line[C_MNE]=='res_e':
         if len(line)!=4:
-            print('Error in RES_E directive!')
+            print('Error in RES_E directive! Wrong number of arguments')
             print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
             print(full_source[line[C_LNUM] - 1])
             sys.exit()
+        # insert current EXTMEM address for listing
         line[C_ARG1:C_ARG1]=['0x%04X' % extmem_cnt]
-        #line.append('0x%04X' % extmem_cnt)
         # get the number of words to reserve
+        # Must be an integer or
         if testnum(line[C_ARG2]) == True :
             value = getnum(line[C_ARG2])
-        elif (line[C_ARG2]) in lbl_name :
-            value = lbl_value[lbl_name.index(line[C_ARG2])]            
+        # an already defined label
+        elif line[C_ARG2] in lbl_name :
+            value = lbl_value[lbl_name.index(line[C_ARG2])]
+        if value == -1 :
+            print('Error: Argument must be an integer or an already defined label')
+            print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
+            print(full_source[line[C_LNUM] - 1])
+            sys.exit()
+
         # add own label value to label list
         if line[C_LBL] in lbl_name:
             idx = lbl_name.index(line[C_LBL])
-        else:
-            print('Error: RES_E must be proceeded by a label')
-            print('See file "' + listing_name + '" at line '  + str(line[C_LNUM]))
-            print(full_source[line[C_LNUM] - 1])
-            sys.exit()
-        lbl_value[idx]=extmem_cnt
+            lbl_value[idx]=extmem_cnt
+
+        
         extmem_cnt+=value
         if extmem_cnt > 65536:
             print('Error: Exceeded EXTMEM range 0..65535')
@@ -493,7 +512,7 @@ named_args = tuple(set(args1 + args2))
 mnemonics_and_directives = tuple(mnemonics) + directives
 
 # Say Hello
-print('\nEC16ASM  V1.0.0 040125 -  Assembler for the EC16 microprocessor\n')
+print('\nEC16ASM  V1.0.1 08-Feb-2025 -  Assembler for the EC16 microprocessor\n')
 
 
 # ---  Step 1 : read all source code into 'full_source' and create listing  ---
@@ -558,24 +577,30 @@ for linenum, asmline in enumerate(full_source):
     # if line is now empty, discard it
     if (not asmline):
         continue
+
     # create list of tokens (labels, mnemonics & arguments)
     asmlinesplit = [p for p in re.split("(\\s|\\\".*?\\\"|'.*?')", asmline) if p.strip()]
+
     # for 'dw_e' only the label and dw_e itself must be converted to lowercase
     # while a possible text argument must not
-    if (len(asmlinesplit) > 2) and (asmlinesplit[1].lower() == 'dw_e'):
+    if (len(asmlinesplit) > 2) and (asmlinesplit[0].lower() == 'dw_e'):
+        asmlinesplit[0] = asmlinesplit[0].lower()
+    elif (len(asmlinesplit) > 3) and (asmlinesplit[1].lower() == 'dw_e'):
         asmlinesplit[0] = asmlinesplit[0].lower()
         asmlinesplit[1] = asmlinesplit[1].lower()
-    # all other lines are converted to lowercase
+   # all other tokens are converted to lowercase
     else:
         for num, token in enumerate(asmlinesplit):
             asmlinesplit[num] = token.lower()
+
     # add line number for reference and linkage
     asmlinesplit[0:0]=[linenum+1]
-    # test if mnemonic or directive (not label)
+
+    # if the mnemonic is not preceded by a label...
     if asmlinesplit[1] in mnemonics_and_directives:
-        # add an empty string in front
+        # insert an empty string in front of it
         asmlinesplit[1:1]=['']
-    #test if label is valid
+    #else test if label is valid
     elif (asmlinesplit[1] not in named_args):
         # label already existing?
         if asmlinesplit[1] in lbl_name:
@@ -588,18 +613,19 @@ for linenum, asmline in enumerate(full_source):
             print('Error: Orphaned Label. See "' + listing_name + '" at line '  + str(linenum+1))
             print(full_source[linenum])
             sys.exit()
-        # label valid. add line number and label to resp. list
-        lbl_line.append(asmlinesplit[0])
-        lbl_name.append(asmlinesplit[1])
-        # add default value as marker
-        lbl_value.append(-1)
-    else:
-        if asmlinesplit[1] in named_args:
-            print("Error! Do not use reserved names as a label")
-        else:
+        # Test for valid label then add line number and label to resp. list
+        if is_valid_label(asmlinesplit[1]) :
+            lbl_name.append(asmlinesplit[1])
+        else :
             print("Error: invalid label. Use only a-z, 0-9 and underscore, don't start with a number")
-            
-        print('See "' + listing_name + '" at line '  + str(linenum+1))
+            print(full_source[linenum])
+            sys.exit()
+        lbl_line.append(asmlinesplit[0])
+        # add -1 as marker for 'not initialized'
+        lbl_value.append(-1)
+
+    elif asmlinesplit[1] in named_args : 
+        print("Error! Do not use reserved names as a label")
         print(full_source[linenum])
         sys.exit()
 
