@@ -24,7 +24,7 @@
             <Keywords name="Folders in comment, open"></Keywords>
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
-            <Keywords name="Keywords1">add addc and brcc brcs brnc brns broc bros brzc brzs calld calli clr cmp dec inc jmpd jmpi mov load movi movxi nop not or pop push reti rets rol ror set shl shr sub subb swap xor</Keywords>
+            <Keywords name="Keywords1">add addc and brcc brcs brnc brns broc bros brzc brzs calld calli clr cmp dec inc jmpd jmpi mov load movi movxi mul nop not or pop push reti rets rol ror set shl shr sub subb swap xor</Keywords>
             <Keywords name="Keywords2">a c ie int flags imask sp status</Keywords>
             <Keywords name="Keywords3">org_e org_i equ res_e res_i include dw_e</Keywords>
             <Keywords name="Keywords4"></Keywords>
