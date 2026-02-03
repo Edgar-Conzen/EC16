@@ -37,6 +37,7 @@ instructions : tuple = (('add', 'a', '#U8', '0x4300'),
                         ('movi', 'a', '#U8', '0x8000'),
                         ('movxi', '#U8', 'a', '0x8200'),
                         ('movxi', 'a', '#U8', '0x8300'),
+                        ('mul', 'a', '#U8', '0x4500'),
                         ('nop', '', '', '0x0000'),
                         ('not', 'a', '', '0x2F00'),
                         ('or', 'a', '#U8', '0x4D00'),
@@ -707,7 +708,7 @@ for linenum, line in enumerate(full_source) :
             if code[codelinenum][C_ARG] == '' :
                 temp = temp + '        '
             else :
-                temp = temp + code[codelinenum][C_ARG] + '   '
+                temp = temp + code[codelinenum][C_ARG] + '  '
             full_source[linenum] = temp + full_source[linenum]
         elif code[codelinenum][C_MNE] == 'dw_e' :
             temp = '  '.join(code[codelinenum][C_ARG1:])
